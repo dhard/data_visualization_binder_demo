@@ -10,6 +10,9 @@ image.
 
 # How To Use this Demonstration
 
-Click on the Binder Badge at the top to launch the demonstration. After starting up in Binder, an instance of RStudio will start in your web-browser. Inside there, navigate to `File -> Open File...`, open the Rmarkdown file called `Data_Visualization_Demonstration.Rmd` included with the RStudio instance, and then press the `Knit` button to generate a complete data science report in HTML based on data included with the RStudio instance. You may press and hold the Knit button to generate the same report in PDF or Microsoft Word formats.
+Click on the Binder Badge at the top to launch the demonstration.
+After starting up in Binder, an instance of RStudio will start in your
+web-browser. Inside there, navigate to `File -> Open File...`, open
+the Rmarkdown file called `Reproducible_Data_Visualization_Demonstration.Rmd` included with the RStudio instance, and then press the `Knit` button to generate a complete data science report in HTML based on data included with the RStudio instance. You may press and hold the Knit button to generate the same report in PDF or Microsoft Word formats.
 
 You may change the code in the notebook and those changes will be reflected in the output when you knit again. 
