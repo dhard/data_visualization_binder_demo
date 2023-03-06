@@ -14,9 +14,9 @@ output:
   word_document:
     toc: yes
 params:
-  semester: "Fall Semester of 2021"
+  semester: "Spring Semester of 2023"
   assignment: "Lab 5"
-  duedate:    "Friday, October 1st"
+  duedate:    "Friday, March 10"
   version: 1
   rmarkdown_url: ""
   bib_url: ""
@@ -102,7 +102,7 @@ library(tidyverse)
 library(eulerr)
 babynames <- read_tsv("babynames_all.txt",col_names=c("decade","rank","boyname","numboys","girlname","numgirls"))
 as_tibble(babynames) %>% select(decade,boyname,girlname) %>% gather(key="type",value="name",boyname,girlname) %>% select(decade,name) %>% table() %>% t() -> names.table
-plot(euler(as.data.frame.matrix(names.table[,c(1,4,7,10,13)])),quantities=TRUE)
+plot(euler(as.data.frame.matrix(names.table[,c(1,4,7,10,13)])),quantities=TRUE,main="Sharing of Top 200 U.S. Babynames Across Five Decades")
 ```
 
 
@@ -112,8 +112,11 @@ plot(euler(as.data.frame.matrix(names.table[,c(1,4,7,10,13)])),quantities=TRUE)
 
 Answer `r q`:
 ```{r}
+library(pals)
 ggplot(iris, aes(Sepal.Length, Sepal.Width, alpha=0.5, color = Species, size=Petal.Width)) +
-  geom_jitter(height=0.02,width=0.02)
+  geom_jitter(height=0.02,width=0.02) + 
+  labs(title="Sepal Width and Petal Width of Three Species of Iris against Sepal Length",x="Sepal Length",y="Sepal Width",subtitle="Anderson (1935). The Irises of the Gaspe Peninsula, Bulletin of the American Iris Society 59:2") +
+  scale_color_manual(values=okabe(4)[c(3,2,4)])
 ```
 
 
@@ -123,6 +126,6 @@ ggplot(iris, aes(Sepal.Length, Sepal.Width, alpha=0.5, color = Species, size=Pet
 
 Answer `r q`:
 ```{r}
-ggplot(iris, aes(x = Sepal.Length, fill = Species)) + geom_density(alpha=0.3) + xlab("Sepal Length") + ggtitle("Sepal Lengths of Irises by Species") + scale_fill_OkabeIto()
+ggplot(iris, aes(x = Sepal.Length, fill = Species)) + geom_density(alpha=0.3) + xlab("Sepal Length") + labs(title="Distributions of Sepal Lengths in Three Species of Iris",subtitle="Demonstrates Okabe Colorblind-safe Palette") + scale_fill_manual(values=okabe(4)[c(3,2,4)])
 ```
 
