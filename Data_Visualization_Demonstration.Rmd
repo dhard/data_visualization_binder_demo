@@ -19,6 +19,7 @@ editor_options:
   chunk_output_type: inline
 urlcolor: blue
 linkcolor: red
+bibliography: Data_Visualization_Demonstration.bib
 ---
 ```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
 knitr::opts_chunk$set(echo=TRUE,cache=TRUE,warning=FALSE, message=FALSE)
@@ -46,54 +47,83 @@ This document demonstrates reproducible computational data scientific authoring 
 
 ### Integrating, Reshaping and Visualizing Incidence of Babynames Over Decades with Euler Diagrams
 
-For many years the U.S. Social Security Administration has published data on [Popular Baby Names by Decade](https://www.ssa.gov/OACT/babynames/decades/) for  decades from the 1880s to the 2010s. There are 14 decades of data encompassing the top 200 boy's and girl's names from each decade, and this data has been used to study cultural evolution trends. Since 2009, Bioinformatics students at U.C. Merced have trained on autimated web-scraping, integrating and analyzing baby names data.
+For many years the U.S. Social Security Administration (SSA) has published data on [Popular Baby Names by Decade](https://www.ssa.gov/OACT/babynames/decades/) fordecades from the 1880s to the 2010s. There are 14 decades of data encompassing the top 200 boy's and girl's names from each decade, and this data has been used to study cultural evolution trends, for example in @hahn_drift_2003. 
 
-In this problem solution I demonstrate aggregating the incidence of all names in the data over all of the decades and visualizing the incidenece/sharing of names over decades using Venn/Euler diagrams. 
+Since 2009, Bioinformatics students at U.C. Merced have trained on autimated web-scraping, integrating and analyzing baby names data from the SSA.
 
-```{bash download, eval=FALSE}
-perl -e 'for(0..13) {$Y=1880 + ($_*10); system "wget \"https://www.ssa.gov/OACT/babynames/decades/names${Y}s.html\"\n"}'
+In this problem solution I demonstrate aggregating the incidence of all names in the data over all of the decades and visualizing the incidenece/sharing of names over decades using Venn/Euler diagrams implemented in the [Eulerr package](https://cran.r-project.org/web/packages/eulerr/vignettes/introduction.html). 
 
-
-1. Selects only the columns corresponding to the decades `1880 1910 1940 1970 2000` 
-1. Visualizes the incidence of names over these five decades in an Euler diagram that shows the numbers of names in each overlap by passing the parameter `quantities=TRUE` to the `plot()` function.
+Although the maximum number of sets recommended to visualize in such diagrams is five, **you should feel free to change which five decades are visualized in the diagram by editing the code chunk and reknitting the document.**
 
 ```{r}
 library(tidyverse)
 library(eulerr)
-babynames <- read_tsv("babynames_all.txt",col_names=c("decade","rank","boyname","numboys","girlname","numgirls"))
-as_tibble(babynames) %>% select(decade,boyname,girlname) %>% gather(key="type",value="name",boyname,girlname) %>% select(decade,name) %>% table() %>% t() -> names.table
+babynames <- read_tsv("babynames_all.txt",col_names=c("decade","rank","boy_name","boy_number","girl_name","girl_number"),show_col_types = FALSE)
+babynames <- babynames[,-7]
+as_tibble(babynames) %>% select(decade,boy_name,girl_name) %>% gather(key="type",value="name",boy_name,girl_name) %>% select(decade,name) %>% table() %>% t() -> names.table
 decades <- c("1880","1910","1940","1970","2000")
+#decades <- c("1960","1970","1980","1990","2000")
 plot(euler(as.data.frame.matrix(names.table[,decades])),quantities=TRUE,main="Sharing of Top 200 U.S. Babynames Across Five Decades")
+```
+
+### Wordclouds of Top 200 Baby Names by Decades
+
+Name sizes are proportional to absolute frequencies of names.
+
+#### Wordcloud of Name Frequencies in the 1910s
+
+```{r}
+library(wordcloud2)
+babynames %>% pivot_longer(cols = boy_name:girl_number, names_to = c("sex",".value"), names_sep = "_") %>% filter(decade==1910) -> termdata
+data     <- data.frame(word=termdata$name,freq=termdata$number)
+data     <- data[order(data$freq,decreasing = TRUE),]
+wordcloud2(data = data,size=0.4)
+```
+
+
+#### Wordcloud of Name Frequencies in the 2000s
+
+```{r}
+library(wordcloud2)
+babynames %>% pivot_longer(cols = boy_name:girl_number, names_to = c("sex",".value"), names_sep = "_") %>% filter(decade==2000) -> termdata
+data     <- data.frame(word=termdata$name,freq=termdata$number)
+data     <- data[order(data$freq,decreasing = TRUE),]
+wordcloud2(data = data,size=0.4)
 ```
 
 
 ### Scatterplots using `ggplot2`
 
-**Question `r q<-q+1;q`:  Graph `Sepal.Width` against `Sepal.Length` in the `iris` dataset. Color points by `Species` and make their areas ("sizes") proportional to `Petal.Width`. Use an alpha of 0.5 and jitter height and width parameters of 0.02 to deal with overplotting in the data.**
+This problem demonstrates some techniques with scatterplots using `ggplot2` which is part of the TideVerse and the `iris` data (which comes built into base R, because R is a programming language and knowledge base built by statisticians for statisticians). 
+
+Point sizes are used to visualize a second response variable `Petal.Width` and transparency and jitter are used to deal with overplotting in the data. The Okabe colorblind-friendly color palette for categorical data is used.
 
 Answer `r q`:
 ```{r}
 library(pals)
-ggplot(iris, aes(Sepal.Length, Sepal.Width, alpha=0.5, color = Species, size=Petal.Width)) +
+ggplot(iris, aes(Sepal.Length, Sepal.Width, alpha=0.3, color = Species, size=Petal.Width)) +
   geom_jitter(height=0.02,width=0.02) + 
-  labs(title="Sepal Width and Petal Width of Three Species of Iris against Sepal Length",x="Sepal Length",y="Sepal Width",subtitle="Anderson (1935). The Irises of the Gaspe Peninsula, Bulletin of the American Iris Society 59:2") +
+  labs(title="Sepal Width and Length and Petal Width in Three Species of Iris",x="Sepal Length (cm)",y="Sepal Width (cm)",subtitle="Anderson (1935). The Irises of the Gaspe Peninsula, Bulletin of the American Iris Society 59:2") +
   scale_color_manual(values=okabe(4)[c(3,2,4)])
 ```
 
 
 ### Visualizing Overlapping Densities using `ggplot2`
 
-**Question `r q<-q+1;q`:  Write exactly one expression in R that evaluates to use `ggplot()` `geom_density()` and the colorblind-safe Okabe color scale to compute and render a color-blind-friendly density plot of Sepal Lengths in the `iris` data colored by species that uses transparency to see overlapping densities, adds the x-label "Sepal Length", and adds the title "Sepal Lengths of Irises by Species".**
+This problem uses `geom_density()` and the colorblind-safe Okabe color scale to compute and render a color-blind-friendly density plot of Sepal Lengths in the `iris` dataset, colored by species, with alpha transparency of 0.3 to see overlapping densities and informative lbels.
 
 Answer `r q`:
 ```{r}
-ggplot(iris, aes(x = Sepal.Length, fill = Species)) + geom_density(alpha=0.3) + xlab("Sepal Length") + labs(title="Distributions of Sepal Lengths in Three Species of Iris",subtitle="Demonstrates Okabe Colorblind-safe Palette") + scale_fill_manual(values=okabe(4)[c(3,2,4)])
+ggplot(iris, aes(x = Sepal.Length, fill = Species)) + geom_density(alpha=0.3) + xlab("Sepal Length (cm)") + labs(title="Distributions of Sepal Lengths in Three Species of Iris",subtitle="Demonstrates Okabe Colorblind-safe Palette") + scale_fill_manual(values=okabe(4)[c(3,2,4)])
 ```
 
 ### Clean and Plot Mammals Data
 
-Read about the tab-delimited dataset of [Life history characteristics of placental non-volant mammals](https://esajournals.onlinelibrary.wiley.com/doi/10.1890/02-9002). Download the data from its [archived location at FigShare](https://figshare.com/articles/dataset/Data_Paper_Data_Paper/3523109?backTo=/collections/LIFE_HISTORY_CHARACTERISTICS_OF_PLACENTAL_NONVOLANT_MAMMALS/3297992) in your working directory alongside this Rmd file.
+Read about the tab-delimited dataset of [Life history characteristics of placental non-volant mammals](https://esajournals.onlinelibrary.wiley.com/doi/10.1890/02-9002) from @ernest_life_2003. 
 
+This data has been downloaded from its [archived location at FigShare](https://figshare.com/articles/dataset/Data_Paper_Data_Paper/3523109?backTo=/collections/LIFE_HISTORY_CHARACTERISTICS_OF_PLACENTAL_NONVOLANT_MAMMALS/3297992) and included in this Binder.
+
+The following code chunk demonstrates reading this data into R, cleaning and selecting the body mass and lifespan fields, and visualizing it in double-log scale colored by taxonomic order.
 
 Answer `r q`:
 ```{r }
@@ -102,14 +132,14 @@ mammals <- mammals[1:1440,]
 data <- mammals[,c(1,5,11)]
 data2 <- data[apply(data,1,function(x)!any(is.na(x))),] ## remove rows with NA
 names(data2) <- c("order","mass","lifespan")
-ggplot(data2, aes(log(mass), log(lifespan), alpha=0.4, color = order)) +
+ggplot(data2, aes(log2(mass), log2(lifespan), alpha=0.4, color = order)) +
   geom_jitter(height=0.01,width=0.01) + 
-  labs(title="Lifespan as a Function of Body Mass in Placental Non-Flying Mammals",x="Body Mass (g)",y="Lifespan (mo.)",subtitle="Data from Ernest (2003). Ecology 84:3402") 
+  labs(title="Lifespan as a Function of Body Mass in Placental Non-Flying Mammals",x="Base-2 Log of Body Mass (g)",y="Base-2 Log of Lifespan (mo.)",subtitle="Data from Ernest (2003). Ecology 84:3402") 
 ```
 
 ## Finite State Machines (FSMs)
 
-These exercises demonstrate how to use hashing through `digest` to allow students to check their work without exposing correct answers.
+These exercises demonstrate how to use hashing through `digest` to allow students to check their work without exposing correct answers to problems.
 
 ### State, Input and Output Sequences
 
@@ -122,13 +152,13 @@ Suppose that this symbol sequence data is input to the machine: input <- "`r inp
 Please put your answer inside the inner-most double-quotation marks `""` in the line below under "Answer."
 Your answer may be shorter than the input sequence because some input symbols are ignored.
 
-Answer `r q`: ans[[`r q`]] <- "`r ans <- append(ans,"uuuxxxvvvxwww");tail(ans,1)`"
+Answer `r q`: ans[[1]] <- "`r ans <- append(ans,"uuuxxxvvvxwww");tail(ans,1)`"
 
 **Question `r q<-q+1;q`:  What state sequence will the machine transition through in response to this input?** 
 
 Include the starting state A before the first input, and include every state the machine is in after every input symbol, including those that produce no output. Your answer should be one character longer than the input sequence.
 
-Answer `r q`: ans[[`r q`]] <- "`r ans <- append(ans,"AAAAAAABABBBBCCCCCCCCC");tail(ans,1)`"
+Answer `r q`: ans[[2]] <- "`r ans <- append(ans,"AAAAAAABABBBBCCCCCCCCC");tail(ans,1)`"
 
 Modify the following code chunk to check your work, using the `nchar()` function in R. 
 
@@ -141,3 +171,5 @@ digest::digest2int(ans[[1]],seed=42) == -1434161340
 nchar(ans[[2]]) == 22
 digest::digest2int(ans[[2]],seed=42) == 1183361337
 ```
+
+# References
