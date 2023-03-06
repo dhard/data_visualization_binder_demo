@@ -1,6 +1,6 @@
 ---
-title: "QSB 282 Lab 5: Data Visualization and Integration (KEY)"
-author: "YourFirstName YourLastName"
+title: "Dmonstration of Data Visualization and Integration Workflows in RStudio"
+author: "YourFirstName YourLastName and David H. Ardell"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -14,12 +14,7 @@ output:
   word_document:
     toc: yes
 params:
-  semester: "Spring Semester of 2023"
-  assignment: "Lab 5"
-  duedate:    "Friday, March 10"
   version: 1
-  rmarkdown_url: ""
-  bib_url: ""
 editor_options:
   chunk_output_type: inline
 urlcolor: blue
@@ -36,66 +31,29 @@ ans <- list() ## to check answers; list() is an OOP-like constructor for lists
 
 ## Version
 
-This is version `r params$version`. Corrected some typos.
+This is version `r params$version`. 
 
 ## About this Document
 
-This document gives instructions for completing the `r params$assignment` Assignment for QSB 282: Graduate Bioinformatics at UC Merced in `r params$semester` taught by Prof. David H. Ardell. This document was written in [RMarkdown](http://rmarkdown.rstudio.com) using [RStudio](https://www.rstudio.com).
+The purpose of this document is to demonstrate how easy it is to share web-based reproducible authoring and computing data scientific workflows written in [RMarkdown/Quarto](http://rmarkdown.rstudio.com) with [RStudio/Posit](https://www.rstudio.com) using the [rocker/geospatial](https://hub.docker.com/r/rocker/geospatial)
+image template with [mybinder.org](https://mybinder.org). Docker images created with Binder can be served to students by any JupyterHub (such as UC Merced's 2i2c hub).
 
-## Purpose of this Lab Assignment
+This document demonstrates reproducible computational data scientific authoring and is based on actual assigned problem sets used for data science and computing labs in BIO 182: Bioinformatics and QSB 282: Graduate Bioinformatics at UC Merced taught by Prof. David H. Ardell. 
 
-The purpose of this assignment is to give you experience in integrating and visualizing data in R.
+# Demonstration
 
-## Instructions to Complete This Lab Assignment
+## Data Visualization Techniques
 
-**Please note this is a predominantly UNIX-based assignment. Some of the UNIX-based solutions are meant to be developed at the shell, pasted into a code-chunk for credit, but not evaluated on knitting because they will take too much time or waste resources, or in some cases, are meant to be run only once. Others code-chunks may be run and the text output of the command should be retained in the knitted output. Code chunks have `eval=FALSE` option set for this reason. **
+### Integrating, Reshaping and Visualizing Incidence of Babynames Over Decades with Euler Diagrams
 
-1. Download a copy of [the Rmarkdown file for this assignment](`r params$rmarkdown_url`) (with `.Rmd` file extension) 
-<!-- and [its corresponding BibTeX bibliography file](`r params$bib_url`) (with `.bib` file extension)  -->
-from CatCourses.
-1. Rename the file copy to reflect your name (so later when you "Knit" the Rmd file in RStudio it will have a name that contains your name). 
-1. Open your renamed `.Rmd` file in RStudio and fill-in your name at the top of the file (in the YAML ("Yet Another Markup Language") header section, in `"double-quotes"` after `author:`).
-1. Answer questions for this assignment by editing your RMarkdown file copy in RStudio. When writing code in your answers, follow these rules:
-    a. for short code answers that are not meant to execute, use \`backticks\` to `typeset them as verbatim code` 
-    b. for multiple lines of code not meant to actually execute but just record commands at the Shell, for example, use plain code blocks that look like this:
-```    
-    This text is displayed verbatim / preformatted
-```
-    c. To write inline R code that evaluates on knitting, put `r ` at the beginning of a backtick-quoted string, for example, the R `date()` function evaluates to `r date()`.
-    d. For an answer containing one or more R or UNIX commands, that you don't want evaluated on knitting, write a code chunk with the `eval=FALSE` option like this:
+For many years the U.S. Social Security Administration has published data on [Popular Baby Names by Decade](https://www.ssa.gov/OACT/babynames/decades/) for  decades from the 1880s to the 2010s. There are 14 decades of data encompassing the top 200 boy's and girl's names from each decade, and this data has been used to study cultural evolution trends. Since 2009, Bioinformatics students at U.C. Merced have trained on autimated web-scraping, integrating and analyzing baby names data.
 
-    ```{bash, echo=TRUE, eval=FALSE}
-       <unix commands here>
-    ```
-    e. If you want the code chunk to run, delete the `eval=FALSE` option (and the comma [`,`] before it).
-    
-1. Fill-in the acknowledgment section below as appropriate.
-1. When done with the assignment, `Knit` to HTML (by pressing the `Knit` button in RStudio) and upload your HTML file to CatCourses. 
+In this problem solution I demonstrate aggregating the incidence of all names in the data over all of the decades and visualizing the incidenece/sharing of names over decades using Venn/Euler diagrams. 
 
-## Suggested Due Date
-`r params$duedate`
+```{bash download, eval=FALSE}
+perl -e 'for(0..13) {$Y=1880 + ($_*10); system "wget \"https://www.ssa.gov/OACT/babynames/decades/names${Y}s.html\"\n"}'
 
-## Acknowledgments
 
-Please acknowledge classmates who helped you in completing this assignment by writing their names here:
-
-1. Friend1
-1. Friend2
-
-# Assignment
-
-## Data Visualization
-
-### Reshaping and Visualizing Incidence of Babynames Over Decades with Euler Diagrams
-
-**Question `r q<-q+1;q`: Write an R code chunk that:**
-
-1. Loads the tidyverse and the `eulerr` library
-1. Reads in the `babynames_all.txt` file you created previously that contains decade information in the first column
-1. Names/Renames the columns to the following:  `decade rank boyname numboys  girlname numgirls` ending with a tibble with those column names
-1. Uses `select()` (possibly more than once), and `gather()` to reshape the babynames data into two columns, the first column with decades and the second with names ranked in that decade, either boy's or girl's names, which are in separate rows, one row per name.
-1. Takes the output of the last step and inputs it to the base-R `table()` function to cross-tabulate names by decade, and the base-R `t()` function, standing for "transpose," which transposes the table, so that rows correspond to names and columns to decades, and saves this to an R table called `names.table`.
-1. Converts `names.table` to a matrix-form data.frame using the function `as.data.frame.matrix()` 
 1. Selects only the columns corresponding to the decades `1880 1910 1940 1970 2000` 
 1. Visualizes the incidence of names over these five decades in an Euler diagram that shows the numbers of names in each overlap by passing the parameter `quantities=TRUE` to the `plot()` function.
 
@@ -104,7 +62,8 @@ library(tidyverse)
 library(eulerr)
 babynames <- read_tsv("babynames_all.txt",col_names=c("decade","rank","boyname","numboys","girlname","numgirls"))
 as_tibble(babynames) %>% select(decade,boyname,girlname) %>% gather(key="type",value="name",boyname,girlname) %>% select(decade,name) %>% table() %>% t() -> names.table
-plot(euler(as.data.frame.matrix(names.table[,c(1,4,7,10,13)])),quantities=TRUE,main="Sharing of Top 200 U.S. Babynames Across Five Decades")
+decades <- c("1880","1910","1940","1970","2000")
+plot(euler(as.data.frame.matrix(names.table[,decades])),quantities=TRUE,main="Sharing of Top 200 U.S. Babynames Across Five Decades")
 ```
 
 

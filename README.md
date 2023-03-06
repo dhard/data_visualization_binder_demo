@@ -10,4 +10,4 @@ image.
 
 # How To Use this Demonstration
 
-Click on the RStudio Binder Badge to Launch the Demonstration
+Click on the Binder Badge at the top to Launch the Demonstration. After starting up in Binder, an instance of RStudio will start in your web-browser. Inside there, navigate to `File -> Open File...` and open the Rmarkdown file  
