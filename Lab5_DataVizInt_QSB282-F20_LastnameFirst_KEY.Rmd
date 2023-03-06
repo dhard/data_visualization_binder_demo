@@ -1,0 +1,128 @@
+---
+title: "QSB 282 Lab 5: Data Visualization and Integration (KEY)"
+author: "YourFirstName YourLastName"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    highlight: tango
+    number_sections: yes
+    theme: united
+    toc: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+  word_document:
+    toc: yes
+params:
+  semester: "Fall Semester of 2021"
+  assignment: "Lab 5"
+  duedate:    "Friday, October 1st"
+  version: 1
+  rmarkdown_url: ""
+  bib_url: ""
+editor_options:
+  chunk_output_type: inline
+urlcolor: blue
+linkcolor: red
+---
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_chunk$set(echo=TRUE,cache=TRUE,warning=FALSE, message=FALSE)
+q <- 0 ## initialize question counter
+ans <- list() ## to check answers; list() is an OOP-like constructor for lists
+```
+
+
+# Preface
+
+## Version
+
+This is version `r params$version`. Corrected some typos.
+
+## About this Document
+
+This document gives instructions for completing the `r params$assignment` Assignment for QSB 282: Graduate Bioinformatics at UC Merced in `r params$semester` taught by Prof. David H. Ardell. This document was written in [RMarkdown](http://rmarkdown.rstudio.com) using [RStudio](https://www.rstudio.com).
+
+## Purpose of this Lab Assignment
+
+The purpose of this assignment is to give you experience in integrating and visualizing data in R.
+
+## Instructions to Complete This Lab Assignment
+
+**Please note this is a predominantly UNIX-based assignment. Some of the UNIX-based solutions are meant to be developed at the shell, pasted into a code-chunk for credit, but not evaluated on knitting because they will take too much time or waste resources, or in some cases, are meant to be run only once. Others code-chunks may be run and the text output of the command should be retained in the knitted output. Code chunks have `eval=FALSE` option set for this reason. **
+
+1. Download a copy of [the Rmarkdown file for this assignment](`r params$rmarkdown_url`) (with `.Rmd` file extension) 
+<!-- and [its corresponding BibTeX bibliography file](`r params$bib_url`) (with `.bib` file extension)  -->
+from CatCourses.
+1. Rename the file copy to reflect your name (so later when you "Knit" the Rmd file in RStudio it will have a name that contains your name). 
+1. Open your renamed `.Rmd` file in RStudio and fill-in your name at the top of the file (in the YAML ("Yet Another Markup Language") header section, in `"double-quotes"` after `author:`).
+1. Answer questions for this assignment by editing your RMarkdown file copy in RStudio. When writing code in your answers, follow these rules:
+    a. for short code answers that are not meant to execute, use \`backticks\` to `typeset them as verbatim code` 
+    b. for multiple lines of code not meant to actually execute but just record commands at the Shell, for example, use plain code blocks that look like this:
+```    
+    This text is displayed verbatim / preformatted
+```
+    c. To write inline R code that evaluates on knitting, put `r ` at the beginning of a backtick-quoted string, for example, the R `date()` function evaluates to `r date()`.
+    d. For an answer containing one or more R or UNIX commands, that you don't want evaluated on knitting, write a code chunk with the `eval=FALSE` option like this:
+
+    ```{bash, echo=TRUE, eval=FALSE}
+       <unix commands here>
+    ```
+    e. If you want the code chunk to run, delete the `eval=FALSE` option (and the comma [`,`] before it).
+    
+1. Fill-in the acknowledgment section below as appropriate.
+1. When done with the assignment, `Knit` to HTML (by pressing the `Knit` button in RStudio) and upload your HTML file to CatCourses. 
+
+## Suggested Due Date
+`r params$duedate`
+
+## Acknowledgments
+
+Please acknowledge classmates who helped you in completing this assignment by writing their names here:
+
+1. Friend1
+1. Friend2
+
+# Assignment
+
+# Reshaping and Visualizing Incidence of Babynames Over Decades with Euler Diagrams
+
+**Question `r q<-q+1;q`: Write an R code chunk that:**
+
+1. Loads the tidyverse and the `eulerr` library
+1. Reads in the `babynames_all.txt` file you created previously that contains decade information in the first column
+1. Names/Renames the columns to the following:  `decade rank boyname numboys  girlname numgirls` ending with a tibble with those column names
+1. Uses `select()` (possibly more than once), and `gather()` to reshape the babynames data into two columns, the first column with decades and the second with names ranked in that decade, either boy's or girl's names, which are in separate rows, one row per name.
+1. Takes the output of the last step and inputs it to the base-R `table()` function to cross-tabulate names by decade, and the base-R `t()` function, standing for "transpose," which transposes the table, so that rows correspond to names and columns to decades, and saves this to an R table called `names.table`.
+1. Converts `names.table` to a matrix-form data.frame using the function `as.data.frame.matrix()` 
+1. Selects only the columns corresponding to the decades `1880 1910 1940 1970 2000` 
+1. Visualizes the incidence of names over these five decades in an Euler diagram that shows the numbers of names in each overlap by passing the parameter `quantities=TRUE` to the `plot()` function.
+
+```{r}
+library(tidyverse)
+library(eulerr)
+babynames <- read_tsv("babynames_all.txt",col_names=c("decade","rank","boyname","numboys","girlname","numgirls"))
+as_tibble(babynames) %>% select(decade,boyname,girlname) %>% gather(key="type",value="name",boyname,girlname) %>% select(decade,name) %>% table() %>% t() -> names.table
+plot(euler(as.data.frame.matrix(names.table[,c(1,4,7,10,13)])),quantities=TRUE)
+```
+
+
+# Scatterplots using `ggplot2`
+
+**Question `r q<-q+1;q`:  Graph `Sepal.Width` against `Sepal.Length` in the `iris` dataset. Color points by `Species` and make their areas ("sizes") proportional to `Petal.Width`. Use an alpha of 0.5 and jitter height and width parameters of 0.02 to deal with overplotting in the data.**
+
+Answer `r q`:
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, alpha=0.5, color = Species, size=Petal.Width)) +
+  geom_jitter(height=0.02,width=0.02)
+```
+
+
+# Visualizing Overlapping Densities using `ggplot2`
+
+**Question `r q<-q+1;q`:  Write exactly one expression in R that evaluates to use `ggplot()` `geom_density()` and `scale_fill_OkabeIto()` to compute and render a color-blind-friendly density plot of Sepal Lengths in the `iris` data colored by species that uses transparency to see overlapping densities, adds the x-label "Sepal Length", and adds the title "Sepal Lengths of Irises by Species".**
+
+Answer `r q`:
+```{r}
+ggplot(iris, aes(x = Sepal.Length, fill = Species)) + geom_density(alpha=0.3) + xlab("Sepal Length") + ggtitle("Sepal Lengths of Irises by Species") + scale_fill_OkabeIto()
+```
+
