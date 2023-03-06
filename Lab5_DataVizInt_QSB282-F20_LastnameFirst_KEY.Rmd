@@ -84,7 +84,9 @@ Please acknowledge classmates who helped you in completing this assignment by wr
 
 # Assignment
 
-# Reshaping and Visualizing Incidence of Babynames Over Decades with Euler Diagrams
+## Data Visualization
+
+### Reshaping and Visualizing Incidence of Babynames Over Decades with Euler Diagrams
 
 **Question `r q<-q+1;q`: Write an R code chunk that:**
 
@@ -106,7 +108,7 @@ plot(euler(as.data.frame.matrix(names.table[,c(1,4,7,10,13)])),quantities=TRUE,m
 ```
 
 
-# Scatterplots using `ggplot2`
+### Scatterplots using `ggplot2`
 
 **Question `r q<-q+1;q`:  Graph `Sepal.Width` against `Sepal.Length` in the `iris` dataset. Color points by `Species` and make their areas ("sizes") proportional to `Petal.Width`. Use an alpha of 0.5 and jitter height and width parameters of 0.02 to deal with overplotting in the data.**
 
@@ -120,12 +122,63 @@ ggplot(iris, aes(Sepal.Length, Sepal.Width, alpha=0.5, color = Species, size=Pet
 ```
 
 
-# Visualizing Overlapping Densities using `ggplot2`
+### Visualizing Overlapping Densities using `ggplot2`
 
-**Question `r q<-q+1;q`:  Write exactly one expression in R that evaluates to use `ggplot()` `geom_density()` and `scale_fill_OkabeIto()` to compute and render a color-blind-friendly density plot of Sepal Lengths in the `iris` data colored by species that uses transparency to see overlapping densities, adds the x-label "Sepal Length", and adds the title "Sepal Lengths of Irises by Species".**
+**Question `r q<-q+1;q`:  Write exactly one expression in R that evaluates to use `ggplot()` `geom_density()` and the colorblind-safe Okabe color scale to compute and render a color-blind-friendly density plot of Sepal Lengths in the `iris` data colored by species that uses transparency to see overlapping densities, adds the x-label "Sepal Length", and adds the title "Sepal Lengths of Irises by Species".**
 
 Answer `r q`:
 ```{r}
 ggplot(iris, aes(x = Sepal.Length, fill = Species)) + geom_density(alpha=0.3) + xlab("Sepal Length") + labs(title="Distributions of Sepal Lengths in Three Species of Iris",subtitle="Demonstrates Okabe Colorblind-safe Palette") + scale_fill_manual(values=okabe(4)[c(3,2,4)])
 ```
 
+### Clean and Plot Mammals Data
+
+Read about the tab-delimited dataset of [Life history characteristics of placental non-volant mammals](https://esajournals.onlinelibrary.wiley.com/doi/10.1890/02-9002). Download the data from its [archived location at FigShare](https://figshare.com/articles/dataset/Data_Paper_Data_Paper/3523109?backTo=/collections/LIFE_HISTORY_CHARACTERISTICS_OF_PLACENTAL_NONVOLANT_MAMMALS/3297992) in your working directory alongside this Rmd file.
+
+
+Answer `r q`:
+```{r }
+mammals <- read.table("Mammal_lifehistories_v2.txt",sep="\t",header=TRUE, na.strings = c("-999.00","-999"))
+mammals <- mammals[1:1440,]
+data <- mammals[,c(1,5,11)]
+data2 <- data[apply(data,1,function(x)!any(is.na(x))),] ## remove rows with NA
+names(data2) <- c("order","mass","lifespan")
+ggplot(data2, aes(log(mass), log(lifespan), alpha=0.4, color = order)) +
+  geom_jitter(height=0.01,width=0.01) + 
+  labs(title="Lifespan as a Function of Body Mass in Placental Non-Flying Mammals",x="Body Mass (g)",y="Lifespan (mo.)",subtitle="Data from Ernest (2003). Ecology 84:3402") 
+```
+
+## Finite State Machines (FSMs)
+
+These exercises demonstrate how to use hashing through `digest` to allow students to check their work without exposing correct answers.
+
+### State, Input and Output Sequences
+
+Find in the lecture notes the FSM with three states  $\{A,B,C\}$ that takes as its input symbol set $\{x,y,z\}$ and as its output symbol set $\{u,v,w,x\}$. 
+
+Suppose that this symbol sequence data is input to the machine: input <- "`r input<-"xxxyyyzzzxxxyyyzzzxxx";input`". 
+
+**Question `r q<-q+1;q`:  What output symbol sequence will the machine produce in response to this input?**
+
+Please put your answer inside the inner-most double-quotation marks `""` in the line below under "Answer."
+Your answer may be shorter than the input sequence because some input symbols are ignored.
+
+Answer `r q`: ans[[`r q`]] <- "`r ans <- append(ans,"uuuxxxvvvxwww");tail(ans,1)`"
+
+**Question `r q<-q+1;q`:  What state sequence will the machine transition through in response to this input?** 
+
+Include the starting state A before the first input, and include every state the machine is in after every input symbol, including those that produce no output. Your answer should be one character longer than the input sequence.
+
+Answer `r q`: ans[[`r q`]] <- "`r ans <- append(ans,"AAAAAAABABBBBCCCCCCCCC");tail(ans,1)`"
+
+Modify the following code chunk to check your work, using the `nchar()` function in R. 
+
+On knitting, the boolean expressions in the following code chunk should evaluate to `TRUE` if you answered correctly.
+
+```{r}
+nchar(input) == 21
+nchar(ans[[1]]) == 13
+digest::digest2int(ans[[1]],seed=42) == -1434161340
+nchar(ans[[2]]) == 22
+digest::digest2int(ans[[2]],seed=42) == 1183361337
+```
