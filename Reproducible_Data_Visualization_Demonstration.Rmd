@@ -1,6 +1,6 @@
 ---
-title: "Dmonstration of Data Visualization and Integration Workflows in RStudio"
-author: "YourFirstName YourLastName and David H. Ardell"
+title: "Demonstration of Collaborative, Open and Reproducible Cloud-Based Data Integration, Visualization, Authoring and Data Sharing with R and Quarto via Binder"
+author: "YourFirstNameHere YourLastNameHere and David H. Ardell"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -19,7 +19,7 @@ editor_options:
   chunk_output_type: inline
 urlcolor: blue
 linkcolor: red
-bibliography: Data_Visualization_Demonstration.bib
+bibliography: Reproducible_Data_Visualization_Demonstration.bib
 ---
 ```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
 knitr::opts_chunk$set(echo=TRUE,cache=TRUE,warning=FALSE, message=FALSE)
@@ -36,12 +36,18 @@ This is version `r params$version`.
 
 ## About this Document
 
-The purpose of this document is to demonstrate how easy it is to share web-based reproducible authoring and computing data scientific workflows written in [RMarkdown/Quarto](http://rmarkdown.rstudio.com) with [RStudio/Posit](https://www.rstudio.com) using the [rocker/geospatial](https://hub.docker.com/r/rocker/geospatial)
+The purpose of this document is to demonstrate how easy it is to author and share reproducible data reports and scientific workflows in R and Quarto using Docker-enabled containerization via UC Merced's 212c JupyterHub service and other BinderHubs like Posit Cloud. 
+
+It invites its users to interactively explore data through visualizations and tables they can directly control through editing the document and re-rendering.
+
+This document was written in [RMarkdown/Quarto](http://rmarkdown.rstudio.com) with [RStudio/Posit](https://www.rstudio.com) using the [rocker/geospatial](https://hub.docker.com/r/rocker/geospatial)
 image template with [mybinder.org](https://mybinder.org). Docker images created with Binder can be served to students by any JupyterHub (such as UC Merced's 2i2c hub).
 
-This document demonstrates reproducible computational data scientific authoring and is based on actual assigned problem sets used for data science and computing labs in BIO 182: Bioinformatics and QSB 282: Graduate Bioinformatics at UC Merced taught by Prof. David H. Ardell. 
+This document demonstrates examples of reproducible computational data scientific authoring sourced from assigned problem sets used for data science and computing labs in BIO 182: Bioinformatics and QSB 282: Graduate Bioinformatics at UC Merced taught by Prof. David H. Ardell. 
 
 # Demonstration
+
+After opening this file in RSTudio, press the Knit button (press and hold to select HTML, PDF or Word-based export formats.) You can edit this file and re-knit to update your reports iteratively.
 
 ## Data Visualization Techniques
 
@@ -124,6 +130,30 @@ ggplot(data2, aes(log2(mass), log2(lifespan), alpha=0.4, color = order)) +
   geom_jitter(height=0.01,width=0.01) + 
   labs(title="Lifespan as a Function of Body Mass in Placental Non-Flying Mammals",x="Base-2 Log of Body Mass (g)",y="Base-2 Log of Lifespan (mo.)",subtitle="Data from Ernest (2003). Ecology 84:3402") 
 ```
+
+### Interactive Table of Mammals Data
+
+```{r}
+library(DT)
+datatable(mammals,caption="Data for Placental Non-Flying Mammals from Ernest (2003). Ecology 84:3402")
+```
+
+
+### Export Mammals Data to Excel
+
+Play the code chunk here to export the Mammls Data to an Excel spreadsheet
+
+```{r, eval=FALSE}
+library(writexl)
+write_xlsx(
+  data.frame(mammals),
+  path = "Mammals_Ernest_03.xlsx",
+  col_names = TRUE,
+  format_headers = TRUE,
+  use_zip64 = FALSE
+)
+```
+
 
 ## Finite State Machines (FSMs)
 
