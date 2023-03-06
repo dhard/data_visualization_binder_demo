@@ -77,20 +77,8 @@ library(wordcloud2)
 babynames %>% pivot_longer(cols = boy_name:girl_number, names_to = c("sex",".value"), names_sep = "_") %>% filter(decade==1910) -> termdata
 data     <- data.frame(word=termdata$name,freq=termdata$number)
 data     <- data[order(data$freq,decreasing = TRUE),]
-wordcloud2(data = data,size=0.4)
+wordcloud2(data = data,size=0.7)
 ```
-
-
-#### Wordcloud of Name Frequencies in the 1980s
-
-```{r}
-library(wordcloud2)
-babynames %>% pivot_longer(cols = boy_name:girl_number, names_to = c("sex",".value"), names_sep = "_") %>% filter(decade==1980) -> termdata
-data     <- data.frame(word=termdata$name,freq=termdata$number)
-data     <- data[order(data$freq,decreasing = TRUE),]
-wordcloud2(data = data,size=0.4)
-```
-
 
 ### Scatterplots using `ggplot2`
 
