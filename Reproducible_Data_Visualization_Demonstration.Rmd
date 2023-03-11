@@ -41,23 +41,23 @@ The purpose of this document is to demonstrate how easy it is to author and shar
 It invites its users to interactively explore data through visualizations and tables they can directly control through editing the document and re-rendering.
 
 This document was written in [RMarkdown/Quarto](http://rmarkdown.rstudio.com) with [RStudio/Posit](https://www.rstudio.com) using the [rocker/geospatial](https://hub.docker.com/r/rocker/geospatial)
-image template with [mybinder.org](https://mybinder.org). Docker images created with Binder can be served to students by any JupyterHub (such as UC Merced's 2i2c hub).
+image template with [mybinder.org](https://mybinder.org). Docker images created with Binder or Docker can be served to students by any JupyterHub (such as UC Merced's 2i2c hub).
 
 This document demonstrates examples of reproducible computational data scientific authoring sourced from assigned problem sets used for data science and computing labs in BIO 182: Bioinformatics and QSB 282: Graduate Bioinformatics at UC Merced taught by Prof. David H. Ardell. 
 
 # Demonstration
 
-After opening this file in RSTudio, press the Knit button (press and hold to select HTML, PDF or Word-based export formats.) You can edit this file and re-knit to update your reports iteratively.
+After opening this file in RStudio, press the Knit button (press and hold to select HTML, PDF or Word-based export formats.) You can edit this file and re-knit to update your reports iteratively.
 
 ## Data Visualization Techniques
 
-### Integrating, Reshaping and Visualizing Incidence of Babynames Over Decades with Euler Diagrams
+### Integrating, Reshaping and Visualizing Incidence of Babynames Over 14 Decades with Euler Diagrams
 
-For many years the U.S. Social Security Administration (SSA) has published data on [Popular Baby Names by Decade](https://www.ssa.gov/OACT/babynames/decades/) fordecades from the 1880s to the 2010s. There are 14 decades of data encompassing the top 200 boy's and girl's names from each decade, and this data has been used to study cultural evolution trends, for example in @hahn_drift_2003. 
+For many years the U.S. Social Security Administration (SSA) has published data on [Popular Baby Names by Decade](https://www.ssa.gov/OACT/babynames/decades/) for decades from the 1880s to the 2010s. This binder contains the tab-delimited file `babynames_all.txt` with 14 decades of data encompassing the top 200 boy's and girl's names from each decade for a total of 2800 lines and 5600 records (200 ranks for each decade and sex). This data has been used to study cultural evolution trends, for example in @hahn_drift_2003. 
 
-Since 2009, Bioinformatics students at U.C. Merced have trained on autimated web-scraping, integrating and analyzing baby names data from the SSA.
+Since 2009, Bioinformatics students at U.C. Merced have trained on automated web-scraping, integrating and analyzing of this SSA baby names data.
 
-In this problem solution I demonstrate aggregating the incidence of all names in the data over all of the decades and visualizing the incidenece/sharing of names over decades using Venn/Euler diagrams implemented in the [Eulerr package](https://cran.r-project.org/web/packages/eulerr/vignettes/introduction.html). 
+In this problem solution I demonstrate aggregating the incidence of all names in the data over all of the decades and visualizing the incidenece/sharing of names over decades using Venn/Euler diagrams implemented in the [Eulerr package](https://cran.r-project.org/web/packages/eulerr/vignettes/introduction.html). This solution pools boys and girls names together by decade.
 
 Although the maximum number of sets recommended to visualize in such diagrams is five, **you should feel free to change which five decades are visualized in the diagram by editing the code chunk and reknitting the document.**
 
@@ -74,15 +74,25 @@ plot(euler(as.data.frame.matrix(names.table[,decades])),quantities=TRUE,main="Sh
 
 ### Wordclouds of Top 200 Baby Names by Decades
 
-Name sizes are proportional to absolute frequencies of names.
+Name sizes are proportional to absolute frequencies of names. Because this visualization is javascript-based, its HTML version is interactive; mouse over the names to see the number of babies born in that decade with that name.
 
-#### Wordcloud of Name Frequencies in the 1910s
+#### Wordcloud of Name Frequencies in Specific Decades
+
+This word-cloud is only knitted into HTML.
 
 ```{r}
+decade_to_view <- 1940
 library(wordcloud2)
-babynames %>% pivot_longer(cols = boy_name:girl_number, names_to = c("sex",".value"), names_sep = "_") %>% filter(decade==1910) -> termdata
+babynames %>% pivot_longer(cols = boy_name:girl_number, names_to = c("sex",".value"), names_sep = "_") %>% filter(decade==decade_to_view) -> termdata
 data     <- data.frame(word=termdata$name,freq=termdata$number)
 data     <- data[order(data$freq,decreasing = TRUE),]
+
+# add a title and remove whitespace from wordcloud2
+# https://stackoverflow.com/questions/66957909/add-a-title-and-remove-whitespace-from-wordcloud2
+layout(matrix(c(1, 2), nrow=2), heights=c(1, 4))
+par(mar=rep(0, 4))
+plot.new()
+text(x = 0.5, y = 0.5, paste0("Wordcloud of Top 200 U.S. Baby Names in the ",decade_to_view,"s"), cex = 1.5, font = 2)
 wordcloud2(data = data,size=0.7)
 ```
 
@@ -124,7 +134,7 @@ Answer `r q`:
 mammals <- read.table("Mammal_lifehistories_v2.txt",sep="\t",header=TRUE, na.strings = c("-999.00","-999"))
 mammals <- mammals[1:1440,]
 data <- mammals[,c(1,5,11)]
-data2 <- data[apply(data,1,function(x)!any(is.na(x))),] ## remove rows with NA
+data2 <- data [apply(data,1,function(x)!any(is.na(x))),] ## remove rows with NA
 names(data2) <- c("order","mass","lifespan")
 ggplot(data2, aes(log2(mass), log2(lifespan), alpha=0.4, color = order)) +
   geom_jitter(height=0.01,width=0.01) + 
