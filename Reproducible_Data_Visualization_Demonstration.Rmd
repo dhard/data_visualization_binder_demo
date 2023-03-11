@@ -1,21 +1,21 @@
 ---
-title: "Demonstration of Collaborative, Open and Reproducible Cloud-Based Data Integration, Visualization, Authoring and Data Sharing with R and Quarto via Binder"
+title: "Demonstration of Collaborative, Open and Reproducible Cloud-Based Data Integration, Visualization, Authoring and Data Sharing with R and RMarkdown/Quarto via RStudio, Git and Binder"
 author: "YourFirstNameHere YourLastNameHere and David H. Ardell"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document:
-    number_sections: yes
-    toc: yes
   html_document:
     highlight: tango
     number_sections: yes
     theme: cerulean
     toc: yes
     toc_depth: 4
+  pdf_document:
+    number_sections: yes
+    toc: yes
   word_document:
     toc: yes
 params:
-  version: 1
+  version: 2
 editor_options:
   chunk_output_type: inline
 always_allow_html: true
@@ -32,7 +32,23 @@ ans <- list() ## to check answers; list() is an OOP-like constructor for lists
 
 ## Version
 
-This is version `r params$version`. 
+This is version `r params$version`. This version changed:
+
+1. theme
+1. section ordering 
+1. added notes and references, and annotations,
+1. bumped  version number
+1. wrapped  code chunks 
+1. enabled PDF and Word exports (wordcloud won't render)
+1. code factoring took place to make  figures easier to change 
+1. added automatically computed title to wordcloud using `paste0()`. 
+1. added version descriptions
+1. added references to document from iris data
+1. added to do
+
+## To Do
+
+1. Replace iris data with palmerpenguin data to illustrate Simpson's Paradox
 
 ## About this Document
 
@@ -42,6 +58,8 @@ It invites its users to interactively explore data through visualizations and ta
 
 This document was written in [RMarkdown/Quarto](http://rmarkdown.rstudio.com) with [RStudio/Posit](https://www.rstudio.com) using the [rocker/geospatial](https://hub.docker.com/r/rocker/geospatial)
 image template with [mybinder.org](https://mybinder.org). Docker images created with Binder or Docker can be served to students by any JupyterHub (such as UC Merced's 2i2c hub).
+
+The recommended format for export with the `Knit` button is HTML. It is possible to make the PDF and Word format exports richer with hyperlinks and other features by adding options to this document's header. 
 
 This document demonstrates examples of reproducible computational data scientific authoring sourced from assigned problem sets used for data science and computing labs in BIO 182: Bioinformatics and QSB 282: Graduate Bioinformatics at UC Merced taught by Prof. David H. Ardell. 
 
@@ -96,7 +114,7 @@ Name sizes are proportional to absolute frequencies of names. Because this visua
 
 #### Wordcloud of Name Frequencies in Specific Decades
 
-This wordcloud is only knitted into HTML.
+This wordcloud only appears when knitted into HTML format.
 
 ```{r}
 decade_to_view <- 1940
@@ -126,12 +144,21 @@ wordcloud2(data = data, size = 0.7)
 
 ### Iris Data
 
-The `iris` data comes built into base R, because R is both a programming language and a statistical knowledge base built by statisticians for statisticians. 
+The `iris` data comes built into base R, because R is both a programming language and a statistical knowledge base built by statisticians for statisticians, a free open-source port of the S language. From `help(iris)`:
 
-```{r}
-help(iris)
-```
+>Edgar Anderson's Iris Data
+Description
+This famous (Fisher's or Anderson's) iris data set gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. The species are Iris setosa, versicolor, and virginica.
 
+>iris is a data frame with 150 cases (rows) and 5 variables (columns) named Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species.
+
+>Source: 
+> Fisher, R. A. (1936) The use of multiple measurements in taxonomic problems. Annals of Eugenics, 7, Part II, 179–188.
+> 
+> The data were collected by Anderson, Edgar (1935). The irises of the Gaspe Peninsula, Bulletin of the American Iris Society, 59, 2–5.
+
+> References
+> Becker, R. A., Chambers, J. M. and Wilks, A. R. (1988) The New S Language. Wadsworth & Brooks/Cole. (has iris3 as iris.)
 
 #### Scatterplots using `ggplot2`
 
